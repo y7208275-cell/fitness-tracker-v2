@@ -305,11 +305,11 @@ export function SettingsPage({
 
         <div className="pref-block">
           <div className="pref-label">组间默认倒计时</div>
-          <div className="seg-row">
+          <div className="unit-seg">
             {[60, 90, 120].map(sec => (
               <button
                 key={sec}
-                className={`seg ${settings.defaultRestSec === sec ? 'active' : ''}`}
+                className={settings.defaultRestSec === sec ? 'active' : ''}
                 onClick={() => commit({ ...settings, defaultRestSec: sec })}
               >
                 {sec}秒
@@ -338,7 +338,7 @@ export function SettingsPage({
                 className={settings.unit === u ? 'active' : ''}
                 onClick={() => commit({ ...settings, unit: u })}
               >
-                {u.toUpperCase()}
+                {u === 'kg' ? 'KG（千克）' : 'LBS（磅）'}
               </button>
             ))}
           </div>
