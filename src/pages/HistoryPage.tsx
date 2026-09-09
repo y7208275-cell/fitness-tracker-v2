@@ -59,7 +59,8 @@ function groupByDate(sessions: WorkoutSession[]): DayGroup[] {
 
   return Array.from(map.entries())
     .map(([, g]) => {
-      g.sessions.sort((a, b) => (b.startTime || '').localeCompare(a.startTime || ''));
+      // 同一天多次训练按开始时间正序：第 1 次 = 当天最早那次
+      g.sessions.sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
       g.totalMinutes = g.sessions.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
       g.volumeKg = g.sessions.reduce((sum, s) => sum + (s.volumeKg || 0), 0);
       return g;
