@@ -610,6 +610,28 @@ select {
   font-size: 11px;
 }
 
+.rest-info {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.rest-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rest-icon svg {
+  display: block;
+}
+
 .rest-time {
   margin-left: auto;
   display: flex;

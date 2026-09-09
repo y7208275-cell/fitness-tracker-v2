@@ -161,7 +161,9 @@ export function WorkoutPage({
       {rest && restLeft > 0 ? (
         <div className="rest-card">
           <div className="rest-info">
-            <TimerIcon size={18} />
+            <span className="rest-icon">
+              <TimerIcon size={15} />
+            </span>
             <span>组间休息计时</span>
           </div>
           <div className="rest-time">
@@ -179,7 +181,9 @@ export function WorkoutPage({
         </div>
       ) : (
         <div className="rest-card idle">
-          <TimerIcon size={18} />
+          <span className="rest-icon">
+            <TimerIcon size={15} />
+          </span>
           <span>组间休息计时</span>
           <span className="muted">完成一组后自动开始</span>
         </div>
