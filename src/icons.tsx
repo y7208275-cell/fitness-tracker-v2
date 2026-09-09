@@ -106,6 +106,12 @@ export const ChevronDownIcon = (p: IconProps) => (
   </Svg>
 );
 
+export const ChevronUpIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="m6 15 6-6 6 6" />
+  </Svg>
+);
+
 export const TimerIcon = (p: IconProps) => (
   <Svg {...p}>
     <circle cx="12" cy="13" r="8" />

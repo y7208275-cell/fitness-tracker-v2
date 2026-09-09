@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { dateISO, DAY_FULL, formatVolume } from '../utils';
-import { ChevronDownIcon, ChevronRightIcon, InfoIcon, TrophyIcon } from '../icons';
+import { ChevronDownIcon, ChevronUpIcon, InfoIcon, TrophyIcon } from '../icons';
 import type { WorkoutSession } from '../types';
 
 interface Props {
@@ -249,40 +249,62 @@ export function HistoryPage({ sessions }: Props) {
               ))}
             </div>
 
-            <button className="detail-toggle" onClick={() => toggle(group.date)}>
-              {isOpen ? '收起明细' : '查看各组重量明细'}
-              {isOpen ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
+            <button
+              className={`detail-toggle-btn ${isOpen ? 'open' : ''}`}
+              onClick={() => toggle(group.date)}
+            >
+              <span>{isOpen ? '收起明细' : '查看各组重量明细'}</span>
+              {isOpen ? <ChevronUpIcon size={15} /> : <ChevronDownIcon size={15} />}
             </button>
 
-            {isOpen &&
-              group.sessions.map((session, si) => (
-                <div key={session.id ?? session.startTime} className="detail-session">
-                  {group.sessions.length > 1 && (
-                    <div className="detail-session-head">
-                      第 {si + 1} 次 · {formatStart(session.startTime)} · {session.bodyPart} · {session.durationMinutes} 分钟
-                    </div>
-                  )}
-                  {session.exercises.map(e => (
-                    <div key={e.id} className="detail-block">
-                      <div className="detail-name">{e.name}</div>
-                      {e.sets.filter(s => s.done).length > 0 ? (
-                        e.sets
-                          .filter(s => s.done)
-                          .map((s, i) => (
-                            <div key={s.id} className="detail-row">
-                              <span>{i + 1}</span>
-                              <span>{s.warmup ? '热身 ' : ''}{s.drop ? '递减 ' : ''}</span>
-                              <span>{s.weight > 0 ? `${s.weight} kg` : '自重'}</span>
-                              <span>× {s.reps} 次</span>
-                            </div>
-                          ))
-                      ) : (
-                        <div className="muted">（该动作无已完成组）</div>
+            <div className={`detail-collapse ${isOpen ? 'open' : ''}`}>
+              <div className="detail-collapse-inner">
+                <div className="detail-panel">
+                  {group.sessions.map((session, si) => (
+                    <div key={session.id ?? session.startTime} className="detail-session">
+                      {group.sessions.length > 1 && (
+                        <div className="detail-session-head">
+                          第 {si + 1} 次 · {formatStart(session.startTime)} · {session.bodyPart} · {session.durationMinutes} 分钟
+                        </div>
                       )}
+                      {session.exercises.map(e => {
+                        const doneSets = e.sets.filter(s => s.done);
+                        return (
+                          <div key={e.id} className="detail-block">
+                            <div className="detail-name">{e.name}</div>
+                            {doneSets.length > 0 ? (
+                              doneSets.map((s, i) => {
+                                const isPR = group.prs.some(
+                                  pr => pr.exerciseName === e.name && pr.weight === s.weight && pr.reps === s.reps
+                                );
+                                const vol =
+                                  s.weight > 0 && s.reps > 0 ? `${Math.round(s.weight * s.reps)} kg` : '—';
+                                return (
+                                  <div key={s.id} className="set-detail-row">
+                                    <span className="set-no-badge">{i + 1}</span>
+                                    <span className="set-core">
+                                      {s.weight > 0 ? `${s.weight} kg` : '自重'} × {s.reps} 次
+                                    </span>
+                                    <span className="set-tags">
+                                      {s.warmup && <span className="tag-chip warmup">热身</span>}
+                                      {s.drop && <span className="tag-chip drop">递减</span>}
+                                      {isPR && <span className="tag-chip pr">PR</span>}
+                                    </span>
+                                    <span className="set-vol">{vol}</span>
+                                  </div>
+                                );
+                              })
+                            ) : (
+                              <div className="muted">（该动作无已完成组）</div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   ))}
                 </div>
-              ))}
+              </div>
+            </div>
           </section>
         );
       })}
