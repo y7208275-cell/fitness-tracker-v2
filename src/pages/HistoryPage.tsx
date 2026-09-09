@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { formatVolume, DAY_FULL } from '../utils';
-import { ChevronDownIcon, ChevronRightIcon, TrophyIcon } from '../icons';
+import { dateISO, DAY_FULL, formatVolume } from '../utils';
+import { ChevronDownIcon, ChevronRightIcon, InfoIcon, TrophyIcon } from '../icons';
 import type { WorkoutSession } from '../types';
 
 interface Props {
@@ -83,6 +83,7 @@ function sessionMeta(exercises: WorkoutSession['exercises'], weightUnit: string)
 export function HistoryPage({ sessions }: Props) {
   const [filter, setFilter] = useState<string>('全部');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [pop, setPop] = useState<'vol' | 'avg' | null>(null);
 
   const filtered = useMemo(
     () =>
@@ -126,6 +127,8 @@ export function HistoryPage({ sessions }: Props) {
     });
   }
 
+  const todayISO = dateISO(new Date());
+
   return (
     <div className="page history-page">
       <div className="page-head-en">Logs</div>
@@ -142,6 +145,20 @@ export function HistoryPage({ sessions }: Props) {
         <div className="stat-card accent">
           <b>{formatVolume(metrics.totalVolume)}</b>
           <span>总容量</span>
+          <button
+            className="stat-info-btn"
+            onClick={ev => {
+              ev.stopPropagation();
+              setPop(p => (p === 'vol' ? null : 'vol'));
+            }}
+          >
+            <InfoIcon size={13} />
+          </button>
+          {pop === 'vol' && (
+            <div className="stat-pop" onClick={ev => ev.stopPropagation()}>
+              总容量 = 所有已完成组（重量 × 次数）的总和。例如 60kg × 10 次 = 600kg，1000kg 显示为 1t。
+            </div>
+          )}
           <em className={metrics.volumeUp ? 'up' : ''}>
             {metrics.volumeUp ? '超额达标' : '稳步积累'}
           </em>
@@ -149,9 +166,25 @@ export function HistoryPage({ sessions }: Props) {
         <div className="stat-card">
           <b>{metrics.avgMin}</b>
           <span>平均时长</span>
+          <button
+            className="stat-info-btn"
+            onClick={ev => {
+              ev.stopPropagation();
+              setPop(p => (p === 'avg' ? null : 'avg'));
+            }}
+          >
+            <InfoIcon size={13} />
+          </button>
+          {pop === 'avg' && (
+            <div className="stat-pop" onClick={ev => ev.stopPropagation()}>
+              平均时长 = 所有训练总用时 ÷ 训练次数，包含组间休息与热身时间。
+            </div>
+          )}
           <em>分/次</em>
         </div>
       </section>
+
+      {pop && <div className="stat-pop-dismiss" onClick={() => setPop(null)} />}
 
       <div className="filter-row">
         {FILTERS.map(f => (
@@ -182,7 +215,7 @@ export function HistoryPage({ sessions }: Props) {
             <div className="day-head">
               <div>
                 <span className="day-date">{group.date}</span>
-                <span className="day-week">{group.weekday}</span>
+                <span className="day-week">{group.date === todayISO ? `今天${group.weekday}` : group.weekday}</span>
               </div>
               <span className="day-meta">
                 {group.totalMinutes} 分钟 · {group.sessions.length} 次

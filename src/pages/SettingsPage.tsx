@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   DEFAULT_SCHEDULE,
-  PART_EN,
   PART_FOCUS,
   PLAN_TEMPLATES,
   PRESET_EXERCISES,
@@ -156,7 +155,7 @@ export function SettingsPage({
   return (
     <div className="page settings-page">
       <div className="page-head-en">Settings</div>
-      <h1 className="page-title-cn">⚙️ 设置</h1>
+      <h1 className="page-title-cn">设置</h1>
 
       <section className="card settings-card">
         <div className="card-head">
@@ -211,7 +210,7 @@ export function SettingsPage({
                   <option value="_rest">休息</option>
                   {ALL_PARTS.map(p => (
                     <option key={p} value={p}>
-                      {p} · {PART_EN[p]}
+                      {p}
                     </option>
                   ))}
                 </select>

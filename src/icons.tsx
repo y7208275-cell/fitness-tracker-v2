@@ -179,3 +179,17 @@ export const SearchXIcon = (p: IconProps) => (
     <path d="m13.5 8.5-5 5" />
   </Svg>
 );
+
+export const InfoIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 16v-5" />
+    <path d="M12 8h.01" />
+  </Svg>
+);
+
+export const ZapIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </Svg>
+);

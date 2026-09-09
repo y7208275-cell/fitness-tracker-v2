@@ -15,6 +15,7 @@ import {
   CheckIcon,
   DumbbellIcon,
   FlameIcon,
+  InfoIcon,
   PlayIcon,
   PlusIcon,
   SkipIcon,
@@ -61,6 +62,7 @@ export function WorkoutPage({
 }: Props) {
   const [nowTs, setNowTs] = useState(Date.now());
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [showSetHelp, setShowSetHelp] = useState(false);
   const [rest, setRest] = useState<{ endAt: number; totalSec: number } | null>(null);
 
   const part = activeWorkout?.bodyPart ?? null;
@@ -212,7 +214,13 @@ export function WorkoutPage({
               <span>组数</span>
               <span>重量({settings.unit})</span>
               <span>次数</span>
-              <span />
+              <button
+                className="help-head-btn"
+                onClick={() => setShowSetHelp(true)}
+                title="每组标记说明"
+              >
+                <InfoIcon size={13} />
+              </button>
             </div>
 
             {we.sets.map((set, setIdx) => {
@@ -314,6 +322,40 @@ export function WorkoutPage({
           onAdd={ex => onAddExercise(ex)}
           onClose={() => setPickerOpen(false)}
         />
+      )}
+
+      {showSetHelp && (
+        <div className="help-overlay" onClick={() => setShowSetHelp(false)}>
+          <div className="help-pop" onClick={ev => ev.stopPropagation()}>
+            <div className="help-pop-title">每组右侧标记说明</div>
+            <div className="help-item">
+              <span className="help-mark">W</span>
+              <div>
+                <b>热身组</b>
+                <p>用较轻重量激活肌肉的准备组，通常做正式组之前。</p>
+              </div>
+            </div>
+            <div className="help-item">
+              <span className="help-mark drop">↓</span>
+              <div>
+                <b>递减组</b>
+                <p>力竭后立刻降低重量继续做，用来更深度刺激肌肉。</p>
+              </div>
+            </div>
+            <div className="help-item">
+              <span className="help-mark done">
+                <CheckIcon size={14} />
+              </span>
+              <div>
+                <b>已完成</b>
+                <p>表示这组已做完：计入记录并自动开始休息倒计时。</p>
+              </div>
+            </div>
+            <button className="help-close" onClick={() => setShowSetHelp(false)}>
+              知道了
+            </button>
+          </div>
+        </div>
       )}
 
     </div>

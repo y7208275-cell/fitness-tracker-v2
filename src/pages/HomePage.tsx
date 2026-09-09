@@ -9,7 +9,7 @@ import {
   findBestRecord,
   fmtClock,
 } from '../utils';
-import { ChevronRightIcon, DumbbellIcon, FlameIcon, PlayIcon } from '../icons';
+import { CheckIcon, ChevronRightIcon, DumbbellIcon, FlameIcon, PlayIcon, ZapIcon } from '../icons';
 import type {
   ActiveWorkout,
   AppSettings,
@@ -134,17 +134,24 @@ export function HomePage({
                 <ChevronRightIcon size={14} />
               </button>
             </div>
-            <div className="week-grid">
+            <div className="week-pills">
               {[1, 2, 3, 4, 5, 6, 0].map(d => {
                 const entry = settings.schedule.find(s => s.dayOfWeek === d);
                 const part = entry?.bodyPart ?? null;
                 const isToday = d === dow;
+                const date = dateForWeekday(d, today);
+                const trained = !!part && sessions.some(s => s.bodyPart === part && s.date === dateISO(date));
                 return (
-                  <div key={d} className={`week-cell ${isToday ? 'today' : ''} ${part ? '' : 'rest'}`}>
-                    <div className="week-day">
-                      {isToday ? '今日' : `周${DAY_CHARS[d]}`}
+                  <div
+                    key={d}
+                    className={`week-pill ${isToday ? 'today' : ''} ${trained ? 'trained' : ''} ${part ? '' : 'rest'}`}
+                  >
+                    <div className="week-day">{isToday ? '今日' : `周${DAY_CHARS[d]}`}</div>
+                    <div className="week-main">
+                      {isToday && <ZapIcon size={11} />}
+                      {!isToday && trained && <CheckIcon size={12} />}
+                      <span>{part ?? '休'}</span>
                     </div>
-                    <div className="week-part">{part ?? '休'}</div>
                   </div>
                 );
               })}
@@ -212,4 +219,14 @@ export function HomePage({
       )}
     </div>
   );
+}
+
+function dateForWeekday(dow: number, ref: Date): Date {
+  const cur = ref.getDay();
+  const sinceMonday = (cur + 6) % 7;
+  const monday = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() - sinceMonday);
+  const add = dow === 0 ? 6 : dow - 1;
+  const d = new Date(monday);
+  d.setDate(monday.getDate() + add);
+  return d;
 }
