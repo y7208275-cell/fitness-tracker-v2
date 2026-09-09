@@ -208,8 +208,9 @@ export function HistoryPage({ sessions }: Props) {
 
       {groups.map(group => {
         const isOpen = expanded.has(group.date);
-        const head = group.sessions[0];
         const weightUnit = 'kg';
+        const titles = Array.from(new Set(group.sessions.map(s => s.title).filter(Boolean)));
+        const totalExercises = group.sessions.reduce((n, s) => n + s.exercises.length, 0);
         return (
           <section key={group.date} className="day-card">
             <div className="day-head">
@@ -221,11 +222,11 @@ export function HistoryPage({ sessions }: Props) {
                 {group.totalMinutes} 分钟 · {group.sessions.length} 次
               </span>
             </div>
-            <div className="day-title">{head.title}</div>
+            {titles.length > 0 && <div className="day-title">{titles.join(' / ')}</div>}
 
             <div className="day-badges">
               <span className="day-vol">
-                {head.exercises.length} 个动作 · {formatVolume(group.volumeKg)}
+                {totalExercises} 个动作 · {formatVolume(group.volumeKg)}
               </span>
               <span className="day-dur">⏱ {group.totalMinutes} 分钟</span>
             </div>
@@ -240,8 +241,8 @@ export function HistoryPage({ sessions }: Props) {
             )}
 
             <div className="day-ex-grid">
-              {sessionMeta(head.exercises, weightUnit).map(m => (
-                <div key={m.name} className="day-ex">
+              {sessionMeta(group.sessions.flatMap(s => s.exercises), weightUnit).map((m, i) => (
+                <div key={`${m.name}-${i}`} className="day-ex">
                   <span className="day-ex-name">{m.name}</span>
                   <span className="day-ex-meta">{m.label}</span>
                 </div>
@@ -254,23 +255,32 @@ export function HistoryPage({ sessions }: Props) {
             </button>
 
             {isOpen &&
-              head.exercises.map(e => (
-                <div key={e.id} className="detail-block">
-                  <div className="detail-name">{e.name}</div>
-                  {e.sets.filter(s => s.done).length > 0 ? (
-                    e.sets
-                      .filter(s => s.done)
-                      .map((s, i) => (
-                        <div key={s.id} className="detail-row">
-                          <span>{i + 1}</span>
-                          <span>{s.warmup ? '热身 ' : ''}{s.drop ? '递减 ' : ''}</span>
-                          <span>{s.weight > 0 ? `${s.weight} kg` : '自重'}</span>
-                          <span>× {s.reps} 次</span>
-                        </div>
-                      ))
-                  ) : (
-                    <div className="muted">（该动作无已完成组）</div>
+              group.sessions.map((session, si) => (
+                <div key={session.id ?? session.startTime} className="detail-session">
+                  {group.sessions.length > 1 && (
+                    <div className="detail-session-head">
+                      第 {si + 1} 次 · {formatStart(session.startTime)} · {session.bodyPart} · {session.durationMinutes} 分钟
+                    </div>
                   )}
+                  {session.exercises.map(e => (
+                    <div key={e.id} className="detail-block">
+                      <div className="detail-name">{e.name}</div>
+                      {e.sets.filter(s => s.done).length > 0 ? (
+                        e.sets
+                          .filter(s => s.done)
+                          .map((s, i) => (
+                            <div key={s.id} className="detail-row">
+                              <span>{i + 1}</span>
+                              <span>{s.warmup ? '热身 ' : ''}{s.drop ? '递减 ' : ''}</span>
+                              <span>{s.weight > 0 ? `${s.weight} kg` : '自重'}</span>
+                              <span>× {s.reps} 次</span>
+                            </div>
+                          ))
+                      ) : (
+                        <div className="muted">（该动作无已完成组）</div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))}
           </section>
@@ -286,4 +296,12 @@ export function HistoryPage({ sessions }: Props) {
       )}
     </div>
   );
+}
+
+function formatStart(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const h = String(d.getHours()).padStart(2, '0');
+  const m = String(d.getMinutes()).padStart(2, '0');
+  return `${h}:${m}`;
 }
