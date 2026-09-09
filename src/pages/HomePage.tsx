@@ -146,12 +146,17 @@ export function HomePage({
                     key={d}
                     className={`week-pill ${isToday ? 'today' : ''} ${trained ? 'trained' : ''} ${part ? '' : 'rest'}`}
                   >
-                    <div className="week-day">{isToday ? '今日' : `周${DAY_CHARS[d]}`}</div>
-                    <div className="week-main">
-                      {isToday && <ZapIcon size={11} />}
-                      {!isToday && trained && <CheckIcon size={12} />}
-                      <span>{part ?? '休'}</span>
-                    </div>
+                    <span className="wk-day">{isToday ? '今日' : `周${DAY_CHARS[d]}`}</span>
+                    <span className="wk-icon">
+                      {isToday ? (
+                        <ZapIcon size={14} />
+                      ) : trained ? (
+                        <CheckIcon size={15} />
+                      ) : !part ? (
+                        <span className="wk-emoji">☕</span>
+                      ) : null}
+                    </span>
+                    <span className="wk-part">{part ?? '休'}</span>
                   </div>
                 );
               })}
