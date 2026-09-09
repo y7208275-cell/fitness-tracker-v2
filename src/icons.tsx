@@ -199,3 +199,13 @@ export const ZapIcon = (p: IconProps) => (
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </Svg>
 );
+
+export const CoffeeIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+    <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+    <path d="M6 2v2" />
+    <path d="M10 2v2" />
+    <path d="M14 2v2" />
+  </Svg>
+);

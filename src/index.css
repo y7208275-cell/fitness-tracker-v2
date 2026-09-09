@@ -1823,12 +1823,6 @@ select {
   color: var(--primary);
 }
 
-.wk-emoji {
-  font-size: 16px;
-  line-height: 1;
-  opacity: 0.9;
-}
-
 .wk-part {
   font-size: 14px;
   font-weight: 800;

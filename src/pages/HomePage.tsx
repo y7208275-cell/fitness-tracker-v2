@@ -9,7 +9,7 @@ import {
   findBestRecord,
   fmtClock,
 } from '../utils';
-import { CheckIcon, ChevronRightIcon, DumbbellIcon, FlameIcon, PlayIcon, ZapIcon } from '../icons';
+import { CheckIcon, ChevronRightIcon, CoffeeIcon, DumbbellIcon, FlameIcon, PlayIcon, ZapIcon } from '../icons';
 import type {
   ActiveWorkout,
   AppSettings,
@@ -153,7 +153,7 @@ export function HomePage({
                       ) : trained ? (
                         <CheckIcon size={15} />
                       ) : !part ? (
-                        <span className="wk-emoji">☕</span>
+                        <CoffeeIcon size={15} />
                       ) : null}
                     </span>
                     <span className="wk-part">{part ?? '休'}</span>
