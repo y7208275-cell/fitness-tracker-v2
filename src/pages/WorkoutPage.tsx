@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ALL_PARTS, PART_EN, ROUTINE_TEMPLATES } from '../db';
 import { ExercisePicker } from '../components/ExercisePicker';
+import { getGuide } from '../guides';
 import {
   completedVolume,
   findBestRecord,
@@ -27,6 +28,7 @@ import type {
   AppSettings,
   BodyPart,
   LibraryExercise,
+  WorkoutExercise,
   WorkoutSession,
   WorkoutSet,
 } from '../types';
@@ -63,6 +65,7 @@ export function WorkoutPage({
   const [nowTs, setNowTs] = useState(Date.now());
   const [pickerOpen, setPickerOpen] = useState(false);
   const [showSetHelp, setShowSetHelp] = useState(false);
+  const [guideEx, setGuideEx] = useState<WorkoutExercise | null>(null);
   const [rest, setRest] = useState<{ endAt: number; totalSec: number } | null>(null);
 
   const part = activeWorkout?.bodyPart ?? null;
@@ -191,6 +194,13 @@ export function WorkoutPage({
               <div>
                 <div className="ex-name">
                   {we.name}
+                  <button
+                    className="ex-info-btn"
+                    title="动作做法与要领"
+                    onClick={() => setGuideEx(we)}
+                  >
+                    <InfoIcon size={14} />
+                  </button>
                   {we.tag && <span className="tag-mini soft">{we.tag}</span>}
                   <span className="ex-progress">
                     {doneCount}/{we.sets.length} 组
@@ -352,6 +362,30 @@ export function WorkoutPage({
               </div>
             </div>
             <button className="help-close" onClick={() => setShowSetHelp(false)}>
+              知道了
+            </button>
+          </div>
+        </div>
+      )}
+
+      {guideEx && (
+        <div className="help-overlay" onClick={() => setGuideEx(null)}>
+          <div className="help-pop guide-pop" onClick={ev => ev.stopPropagation()}>
+            <div className="guide-pop-head">
+              <div className="help-pop-title">{guideEx.name}</div>
+              <div className="guide-meta">
+                {guideEx.equipment} · {guideEx.tag} · {guideEx.focus}
+              </div>
+            </div>
+            <div className="guide-sec">
+              <b>做法</b>
+              <p>{getGuide(guideEx.name).how}</p>
+            </div>
+            <div className="guide-sec">
+              <b>要领</b>
+              <p>{getGuide(guideEx.name).key}</p>
+            </div>
+            <button className="help-close" onClick={() => setGuideEx(null)}>
               知道了
             </button>
           </div>
